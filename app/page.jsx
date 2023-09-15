@@ -9,8 +9,12 @@ const Home = () => {
   const [selStates, setSelStates] = useState([]);
   const [twoRngStates, setTwoRngStates] = useState(null); 
   const handleSelStates = (state) => {
-    if (!selStates.includes(state))
+    if (!selStates.includes(state) && !twoRngStates.find(elt => elt.name === state)) {
       setSelStates([...selStates, state]);
+      return true;
+    }
+    else
+      return false;
   }
   const [optimalStates, setOptimalStates] = useState(null);
 
@@ -64,15 +68,30 @@ const Home = () => {
     return optimal;
   }
 
+  const stateColor = (state) => {
+    if (optimalStates.has(state)) {
+      return "emerald";
+    }
+    return "orange";
+  }
+
 
   return (
-    <section className="justify-center w-6/12 mx-auto">
-    <div>    
-    {twoRngStates && twoRngStates[0].name}{twoRngStates && twoRngStates[1].name}
+    <section className="">
+    <div className="fixed w-60 top-19 left-0 h-full bg-red-100 px-4 py-2">
+    <p className="font-bold text-lg">States Already Selected</p>
+    {selStates.map((state, i) =><div className="flex mb-2"> 
+      <div className={"w-7 h-7 mr-4 bg-green-200"}></div> 
+      <p key={i}>{state}</p>
+      </div>)}
+    </div>
+    <div className="justify-center w-6/12 mx-auto">
+    <div className="font-bold text-2xl mx-auto w-120 text-center">    
+    Go from {twoRngStates && twoRngStates[0].name} to {twoRngStates && twoRngStates[1].name}
     </div>
     <Game selStates={selStates} twoStates={twoRngStates} optimal={optimalStates} />
-    {selStates.map((state, i) => <p key={i}>{state}</p>)}
     <SearchBar onAddState={handleSelStates}/>
+    </div>
     </section>
   );
 }
