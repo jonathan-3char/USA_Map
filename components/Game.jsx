@@ -1,12 +1,12 @@
 "use client";
 
-import {USMap} from "./USMap";
+import { USMap } from "./USMap";
 import Marks from "./Marks";
 
-const width = 1200;
-const height = 1000;
+const width = 960;
+const height = 600;
 
-const Game = () => {
+const Game = ({ selStates, twoStates, optimal }) => {
   const data = USMap();
 
   if (!data) {
@@ -15,9 +15,8 @@ const Game = () => {
 
   return (
     <div>
-      Go from state1 to state2
       <svg width={width} height={height}>
-        <Marks data={data}/>
+        <Marks data={data} selStates={selStates} twoStates={twoStates} optimal={optimal}/>
       </svg>
     </div>
   );

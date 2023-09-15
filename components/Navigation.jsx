@@ -3,9 +3,9 @@ import Link from 'next/link';
 
 const Navigation = () => {
   return (
-    <nav className="flex w-full justify-between bg-red-100 px-4 py-2">
-      <div className="bg-red-900 flex text-amber-50">Learn US States</div>
-      <div className="bg-orange-100 flex  justify-center items-center">
+    <nav className="flex w-full justify-between bg-slate-100 px-4 py-2">
+      <div className=" flex ">Learn US States</div>
+      <div className="flex  justify-center items-center">
         <div >
         <Image
           src="assets/moon.svg"
