@@ -9,3 +9,18 @@ h2 {
 .path{
   fill: #ffff;
 }
+
+.gradient {
+  background: #333;
+  background-image: linear-gradient(rgba(0, 255, 0, .7) .1em, transparent .1em),
+  linear-gradient(90deg, rgba(0,255, 0, .7) .1em, transparent .1em);
+}
+
+.dots {
+   background-image: 
+    radial-gradient(rgb(255, 255, 255) 10%, transparent 10.4%),
+    radial-gradient(rgb(255, 255, 255) 10%, transparent 10.4%);
+  background-position: 0px 0px, 28px 28px;
+  background-size: 56px 56px;
+  background-color: rgb(232, 230, 247);
+}

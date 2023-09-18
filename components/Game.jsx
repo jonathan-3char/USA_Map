@@ -3,8 +3,8 @@
 import { USMap } from "./USMap";
 import Marks from "./Marks";
 
-const width = 960;
-const height = 600;
+const width = 980;
+const height = 610;
 
 const Game = ({ selStates, twoStates, optimal }) => {
   const data = USMap();
@@ -14,7 +14,7 @@ const Game = ({ selStates, twoStates, optimal }) => {
   }
 
   return (
-    <div>
+    <div className="mt-2 outline dots outline-[#9394a5] rounded-lg px-2">
       <svg width={width} height={height}>
         <Marks data={data} selStates={selStates} twoStates={twoStates} optimal={optimal}/>
       </svg>

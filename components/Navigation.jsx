@@ -3,8 +3,8 @@ import Link from 'next/link';
 
 const Navigation = () => {
   return (
-    <nav className="flex w-full justify-between bg-slate-100 px-4 py-2">
-      <div className=" flex ">Learn US States</div>
+    <nav className="flex w-full justify-between bg-[#484b6a] px-4 py-2">
+      <div className=" flex font-bold text-[#E4E4D0]">Learn US States</div>
       <div className="flex  justify-center items-center">
         <div >
         <Image

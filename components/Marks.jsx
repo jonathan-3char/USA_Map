@@ -17,7 +17,7 @@ const Marks = ({ data, selStates, twoStates, optimal }) => {
       if (selStates.includes(feature.properties.name)){
         return <path stroke="#000" key={feature.id} fill="purple" d={path(feature)}/>
       }
-      return <path className="path" stroke={"#000"} key={feature.id} d={path(feature)}/>
+      return <path className="path" fill-opacity="0.0" key={feature.id} d={path(feature)}/>
     })}
   </g>)
 } 

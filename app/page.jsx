@@ -68,21 +68,15 @@ const Home = () => {
     return optimal;
   }
 
-  const stateColor = (state) => {
-    if (optimalStates.has(state)) {
-      return "emerald";
-    }
-    return "orange";
-  }
 
 
   return (
     <section className="">
-    <div className="fixed w-60 top-19 left-0 h-full bg-red-100 px-4 py-2">
+    <div className="fixed w-60 top-19 left-0 h-full bg-[#9394a5] px-4 py-2">
     <p className="font-bold text-lg">States Already Selected</p>
-    {selStates.map((state, i) =><div className="flex mb-2"> 
-      <div className={"w-7 h-7 mr-4 bg-green-200"}></div> 
-      <p key={i}>{state}</p>
+    {selStates.map((state, i) =><div className="flex align-middle outline rounded-lg mb-2"> 
+      <div className="my-2 h-7 w-7 mr-4 bg-green-200 rounded outline"></div> 
+      <p className="text-[#E4E4D0] font-bold" key={i}>{state}</p>
       </div>)}
     </div>
     <div className="justify-center w-6/12 mx-auto">
@@ -90,6 +84,7 @@ const Home = () => {
     Go from {twoRngStates && twoRngStates[0].name} to {twoRngStates && twoRngStates[1].name}
     </div>
     <Game selStates={selStates} twoStates={twoRngStates} optimal={optimalStates} />
+    <div className="h-10"></div>
     <SearchBar onAddState={handleSelStates}/>
     </div>
     </section>
