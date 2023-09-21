@@ -10,12 +10,28 @@ const Home = () => {
   const [twoRngStates, setTwoRngStates] = useState(null);
   const [optimalStates, setOptimalStates] = useState(null);
   const [refresh, setRefresh] = useState(false);
+  const [neighbors, setNeighbors] = useState(null);
 
   useEffect(() => {
     const twoState = [...graph].sort(() => 0.5 - Math.random()).slice(0, 2);
     setTwoRngStates(twoState);
-    setOptimalStates(optimalPath(twoState));
+    const optimal = optimalPath(twoState);
+    setOptimalStates(optimal);
     setSelStates([]);
+
+    const neighbors = new Set();
+
+    optimal.forEach(key => {
+      const state = graph.find(state => state.name === key);
+      state.neighbors.forEach(neighborId => {
+        if (!optimal.has(graph[neighborId].name) && !twoState.includes(graph[neighborId])) {
+          neighbors.add(graph[neighborId].name);
+        }
+      });
+    });
+   setNeighbors(neighbors); 
+
+
   }, [refresh]);
 
   const handleSelStates = (state) => {
@@ -86,7 +102,6 @@ const Home = () => {
       const node = queue.shift();
       visited.add(node.name);
 
-      console.log(node.name)
       if (node.name === twoRngStates[1].name) {
         return true;
       }
@@ -95,7 +110,6 @@ const Home = () => {
         if (!visited.has(graph[neighbor].name) && 
           (selStates.find(state => state.name === graph[neighbor].name) || 
           graph[neighbor].name === twoRngStates[1].name)) {
-          console.log(`${graph[neighbor]} pushed to queue`)
           queue.push(graph[neighbor]);
         }
       }
@@ -112,8 +126,21 @@ const Home = () => {
           {selStates.map((state, i) => {
             if (optimalStates.has(state.name)) {
               return (
-                <li className="flex pl-2 align-middle border border-stone-300 rounded-lg mb-2">
+                <li className="flex pl-2 align-middle border border-stone-300 rounded-lg mb-2"
+                    key={state.name}
+                >
                   <div className="my-2 h-7 w-7 mr-4 bg-green-300 rounded border"></div>
+                  <p className="text-[#E4E4D0] font-bold dark:text-stone-300" key={i}>
+                    {state.name}
+                  </p>
+                </li>
+              );
+            } else if (neighbors.has(state.name)) {
+              return (
+                <li className="flex pl-2 align-middle border border-stone-300 rounded-lg mb-2"
+                  key={state.name}
+                >
+                  <div className="my-2 h-7 w-7 mr-4 bg-orange-300 rounded border"></div>
                   <p className="text-[#E4E4D0] font-bold dark:text-stone-300" key={i}>
                     {state.name}
                   </p>
@@ -121,7 +148,9 @@ const Home = () => {
               );
             }
             return (
-              <li className="flex pl-2 align-middle border border-stone-300 rounded-lg mb-2">
+              <li className="flex pl-2 align-middle border border-stone-300 rounded-lg mb-2"
+                  key={state.name}
+              >
                 <div className="my-2 h-7 w-7 mr-4 bg-red-400 rounded border"></div>
                 <p className="text-[#E4E4D0] font-bold dark:text-stone-300" key={i}>
                   {state.name}
@@ -134,8 +163,13 @@ const Home = () => {
       <div className="justify-center w-6/12 mx-auto">
         <div className="flex">
         <div className="font-bold flex-initial text-2xl mx-auto w-120 text-neutral-700 text-center dark:text-slate-200">
-          Go from {twoRngStates && twoRngStates[0].name} to{" "}
-          {twoRngStates && twoRngStates[1].name}
+          Go from {twoRngStates && 
+            <p
+              className="dark:text-yellow-700 text-yellow-300 inline-block" 
+            >{twoRngStates[0].name}</p>} to{" "}
+            <p
+              className="dark:text-rose-800 text-rose-400 inline-block"
+            >{twoRngStates && twoRngStates[1].name}</p>
         </div>
         <button onClick={() => setRefresh(!refresh)}
           className="bg-[#6c6f91] hover:bg-[#444766] p-2 text-stone-200 font-bold rounded-lg flex-initial dark:bg-stone-500 dark:hover:bg-stone-600"
@@ -156,6 +190,3 @@ const Home = () => {
 
 export default Home;
 
-const applyDarkMode = () => {
-  
-}

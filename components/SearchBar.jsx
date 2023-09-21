@@ -63,7 +63,8 @@ const SearchBar = ({ onAddState, winner }) => {
           winner && 
             <div
               className="w-full font-bold rounded-md px-6 py-6 text-stone-100
-          text-center mx-auto absolute bottom-9 bg-emerald-300"
+                dark:text-stone-400 text-center mx-auto absolute bottom-9
+                bg-emerald-300 dark:bg-emerald-900"
             >
              YOU WON 
             </div>

@@ -24,18 +24,19 @@ const Navigation = () => {
           }>
           <Image
             src="assets/moon.svg"
-            width={30}
-            height={50}
+            width="30"
+            height="30"
             alt="dark mode switch"
-            className="fill-slate-200"
+            className="w-8 h-8"
           />
         </div>
         </div>
         <Link href="/about" className="p-3">
           <Image
             src="assets/question.svg"
-            width={30}
-            height={50}
+            width="30"
+            height="30"
+            className="w-8 h-8"
             alt="link to how to play page"
           />
         </Link>
