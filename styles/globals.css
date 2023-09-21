@@ -8,12 +8,18 @@ h2 {
 
 .path{
   fill: #ffff;
+  fill:rgb(241, 225, 134)
 }
 
 .gradient {
-  background: #333;
-  background-image: linear-gradient(rgba(0, 255, 0, .7) .1em, transparent .1em),
-  linear-gradient(90deg, rgba(0,255, 0, .7) .1em, transparent .1em);
+  --dot-bg: black;
+  --dot-color: white;
+  --dot-size: 1px;
+  --dot-space: 22px;
+	background:
+		linear-gradient(90deg, var(--dot-bg) calc(var(--dot-space) - var(--dot-size)), transparent 1%) center / var(--dot-space) var(--dot-space),
+		linear-gradient(var(--dot-bg) calc(var(--dot-space) - var(--dot-size)), transparent 1%) center / var(--dot-space) var(--dot-space),
+		var(--dot-color);
 }
 
 .dots {
@@ -23,4 +29,5 @@ h2 {
  #1c7cbb calc(100% - 1px));
   background-size: 6.666666666666667% 6.25%;
   border: 1px solid #1c7cbb;
+    background-position: 15px 0;
 }

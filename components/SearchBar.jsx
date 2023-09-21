@@ -38,7 +38,7 @@ const SearchBar = ({ onAddState, winner }) => {
     return filteredSearch.map(state => {
       return (
         <li
-          className="px-3 hover:bg-sky-700"
+          className="px-3 hover:bg-sky-700 dark:hover:bg-zinc-800 dark:text-slate-300"
           key={state.id}
           onClick={() => setValue(state.name)}
         >
@@ -72,7 +72,7 @@ const SearchBar = ({ onAddState, winner }) => {
 
       <input
         disabled={winner}
-        className="px-3 w-full border-2 rounded spellcheck"
+        className="px-3 w-full border-2 rounded spellcheck dark:bg-zinc-700 dark:text-slate-300"
         type="text"
         value={value}
         onChange={onChange}
@@ -80,7 +80,7 @@ const SearchBar = ({ onAddState, winner }) => {
         onKeyDown={handleKeyDown}
       />
       {isTyping && (
-        <div className="max-h-28 overflow-auto">
+        <div className="max-h-28 overflow-auto dark:bg-zinc-700">
           <ul className="relative h-auto border-2 w-auto rounded">
             {onSearch()}
           </ul>

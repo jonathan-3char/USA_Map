@@ -9,13 +9,14 @@ const Home = () => {
   const [selStates, setSelStates] = useState([]);
   const [twoRngStates, setTwoRngStates] = useState(null);
   const [optimalStates, setOptimalStates] = useState(null);
-  const [gameOver, setGameOver] = useState(false);
+  const [refresh, setRefresh] = useState(false);
 
   useEffect(() => {
     const twoState = [...graph].sort(() => 0.5 - Math.random()).slice(0, 2);
     setTwoRngStates(twoState);
     setOptimalStates(optimalPath(twoState));
-  }, []);
+    setSelStates([]);
+  }, [refresh]);
 
   const handleSelStates = (state) => {
     if (
@@ -104,16 +105,16 @@ const Home = () => {
   };
 
   return (
-    <section className="">
-      <div className="fixed w-60 top-19 left-0 h-full bg-[#9394a5] px-4 py-2">
-        <p className="font-bold text-lg">States Already Selected</p>
-        <ul>
+    <section>
+      <div className="fixed w-60 top-19 ml-0 mr-auto h-full bg-[#9394a5] px-4 py-2 flex flex-col dark:bg-zinc-700">
+        <p className="font-bold text-lg text-neutral-700 shrink-0 dark:text-stone-200">States Already Selected</p>
+        <ul className="overflow-y-auto h-[88%]">
           {selStates.map((state, i) => {
             if (optimalStates.has(state.name)) {
               return (
                 <li className="flex pl-2 align-middle border border-stone-300 rounded-lg mb-2">
                   <div className="my-2 h-7 w-7 mr-4 bg-green-300 rounded border"></div>
-                  <p className="text-[#E4E4D0] font-bold" key={i}>
+                  <p className="text-[#E4E4D0] font-bold dark:text-stone-300" key={i}>
                     {state.name}
                   </p>
                 </li>
@@ -122,7 +123,7 @@ const Home = () => {
             return (
               <li className="flex pl-2 align-middle border border-stone-300 rounded-lg mb-2">
                 <div className="my-2 h-7 w-7 mr-4 bg-red-400 rounded border"></div>
-                <p className="text-[#E4E4D0] font-bold" key={i}>
+                <p className="text-[#E4E4D0] font-bold dark:text-stone-300" key={i}>
                   {state.name}
                 </p>
               </li>
@@ -131,11 +132,17 @@ const Home = () => {
         </ul>
       </div>
       <div className="justify-center w-6/12 mx-auto">
-        <div className="font-bold text-2xl mx-auto w-120 text-center">
+        <div className="flex">
+        <div className="font-bold flex-initial text-2xl mx-auto w-120 text-neutral-700 text-center dark:text-slate-200">
           Go from {twoRngStates && twoRngStates[0].name} to{" "}
           {twoRngStates && twoRngStates[1].name}
         </div>
+        <button onClick={() => setRefresh(!refresh)}
+          className="bg-[#6c6f91] hover:bg-[#444766] p-2 text-stone-200 font-bold rounded-lg flex-initial dark:bg-stone-500 dark:hover:bg-stone-600"
+        >Click to Refresh</button>
+      </div>
         <Game
+          className="flex-1"
           selStates={selStates}
           twoStates={twoRngStates}
           optimal={optimalStates}
@@ -148,3 +155,7 @@ const Home = () => {
 };
 
 export default Home;
+
+const applyDarkMode = () => {
+  
+}

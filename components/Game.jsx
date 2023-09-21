@@ -14,8 +14,8 @@ const Game = ({ selStates, twoStates, optimal }) => {
   }
 
   return (
-    <div className="mt-2 outline dots outline-[#9394a5] rounded-lg px-2">
-      <svg width={width} height={height}>
+    <div className="border gradient">
+      <svg width="auto" height="auto" viewBox="0 0 980 610" preserveAspectRatio="xMinYMid">
         <Marks data={data} selStates={selStates} twoStates={twoStates} optimal={optimal}/>
       </svg>
     </div>
