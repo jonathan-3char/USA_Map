@@ -11,6 +11,7 @@ const Home = () => {
   const [optimalStates, setOptimalStates] = useState(null);
   const [refresh, setRefresh] = useState(false);
   const [neighbors, setNeighbors] = useState(null);
+  const [showList, setShowList] = useState(false);
 
   useEffect(() => {
     const twoState = [...graph].sort(() => 0.5 - Math.random()).slice(0, 2);
@@ -45,6 +46,13 @@ const Home = () => {
 
     return false;
   };
+
+  const statesList = () => {
+    return (
+      <div>
+      </div>
+    )
+  }
 
   const optimalPath = ([start, end]) => {
     const queue = [start];
@@ -120,8 +128,50 @@ const Home = () => {
 
   return (
     <section>
-      <div className="fixed w-60 top-19 ml-0 mr-auto h-full bg-[#9394a5] px-4 py-2 flex flex-col dark:bg-zinc-700">
-        <p className="font-bold text-lg text-neutral-700 shrink-0 dark:text-stone-200">States Already Selected</p>
+        {showList && 
+      <div className="fixed max-w-md top-19 ml-0 mr-auto h-full bg-[#9394a5] px-4 py-2 sm:flex flex-col dark:bg-zinc-700">
+        <p className="font-bold text-mg text-neutral-700 shrink-0 dark:text-stone-200">States Selected</p>
+        <ul className="overflow-y-auto h-[88%]">
+          {selStates.map((state, i) => {
+            if (optimalStates.has(state.name)) {
+              return (
+                <li className="flex pl-2 align-middle border border-stone-300 rounded-lg mb-2"
+                    key={state.name}
+                >
+                  <div className="my-2 h-7 w-7 mr-4 bg-green-300 rounded border"></div>
+                  <p className="text-[#E4E4D0] font-bold text-sm dark:text-stone-300" key={i}>
+                    {state.name}
+                  </p>
+                </li>
+              );
+            } else if (neighbors.has(state.name)) {
+              return (
+                <li className="flex pl-2 align-middle border border-stone-300 rounded-lg mb-2"
+                  key={state.name}
+                >
+                  <div className="my-2 h-7 w-7 mr-4 bg-orange-300 rounded border"></div>
+                  <p className="text-[#E4E4D0] font-bold text-sm dark:text-stone-300" key={i}>
+                    {state.name}
+                  </p>
+                </li>
+              );
+            }
+            return (
+              <li className="flex pl-2 align-middle border border-stone-300 rounded-lg mb-2"
+                  key={state.name}
+              >
+                <div className="my-2 h-7 w-7 mr-4 bg-red-400 rounded border"></div>
+                <p className="text-[#E4E4D0] font-bold text-sm dark:text-stone-300" key={i}>
+                  {state.name}
+                </p>
+              </li>
+            );
+          })}
+        </ul>
+      </div>
+        } 
+      <div className="fixed max-w-md top-19 ml-0 mr-auto h-full bg-[#9394a5] px-4 py-2 sm:flex hidden flex-col dark:bg-zinc-700">
+        <p className="font-bold text-mg text-neutral-700 shrink-0 dark:text-stone-200">States Already Selected</p>
         <ul className="overflow-y-auto h-[88%]">
           {selStates.map((state, i) => {
             if (optimalStates.has(state.name)) {
@@ -160,7 +210,7 @@ const Home = () => {
           })}
         </ul>
       </div>
-      <div className="justify-center w-6/12 mx-auto">
+      <div className="justify-center w-10/12 mx-auto sm:w-6/12">
         <div className="flex">
         <div className="font-bold flex-initial text-2xl mx-auto w-120 text-neutral-700 text-center dark:text-slate-200">
           Go from {twoRngStates && 
@@ -172,7 +222,7 @@ const Home = () => {
             >{twoRngStates && twoRngStates[1].name}</p>
         </div>
         <button onClick={() => setRefresh(!refresh)}
-          className="bg-[#6c6f91] hover:bg-[#444766] p-2 text-stone-200 font-bold rounded-lg flex-initial dark:bg-stone-500 dark:hover:bg-stone-600"
+          className="bg-[#6c6f91] hover:bg-[#444766] text-sm sm:text-lg p-2 text-stone-200 font-bold rounded-lg flex-initial dark:bg-stone-500 dark:hover:bg-stone-600"
         >Click to Refresh</button>
       </div>
         <Game
@@ -181,6 +231,12 @@ const Home = () => {
           twoStates={twoRngStates}
           optimal={optimalStates}
         />
+    <button
+      onClick={() => setShowList(!showList)}
+      className="mt-3 flex sm:hidden bg-[#6c6f91] hover:bg-[#444766] text-sm text-stone-200 bottom-10 font-bold mx-auto rounded-full p-1 dark:bg-stone-500 dark:hover:bg-stone-600"
+    >
+    {showList ? "Close List" : "Show States"}
+    </button>
         <div className="h-10"></div>
         <SearchBar onAddState={handleSelStates} winner={twoRngStates && isWinner()} />
       </div>
