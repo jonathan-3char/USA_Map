@@ -47,13 +47,6 @@ const Home = () => {
     return false;
   };
 
-  const statesList = () => {
-    return (
-      <div>
-      </div>
-    )
-  }
-
   const optimalPath = ([start, end]) => {
     const queue = [start];
     const visited = Array(48).fill(null);

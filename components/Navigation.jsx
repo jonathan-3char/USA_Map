@@ -9,6 +9,13 @@ const Navigation = () => {
     <nav className="flex w-full justify-between bg-[#484b6a] px-4 py-2 dark:bg-zinc-800">
       <div className=" flex font-bold text-[#E4E4D0]">Learn US States</div>
       <div className="flex  justify-center items-center">
+        <div className="font-bold px-4 dark:text-white">
+            <Link 
+            href="https://github.com/jonathan-3char"
+            >
+            GitHub Profile
+            </Link>   
+        </div>
         <div>
         <div 
         className="hover:cursor-pointer"
