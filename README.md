@@ -1,5 +1,8 @@
-# U.S.A. Map
+# This is a project that gives two US states and you must find the optimal path to connect them. 
+This project involed the use of React.js, Next.js, d3js, and Tailwind.
 
-This application is a game that displays a U.S.A. map and two states are
-randomly selected and you must find a path to connect them. Each state you choose
-gives you a hint if you're close to connecting the two states.
+## Deployment
+You can see the code running at: https://usa-map.vercel.app/
+
+## Note
+Alaska and Hawaii are excluded because they aren't connected to other states.
