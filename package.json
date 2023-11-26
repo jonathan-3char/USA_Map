@@ -2,7 +2,7 @@
   "name": "us-map-remaster",
   "private": true,
   "version": "0.0.0",
-  "homepage": "https://jonathan-3char.github.io/USA_MAP",
+  "homepage": "https://jonathan-3char.github.io/USA_Map/",
   "type": "module",
   "scripts": {
     "dev": "vite",
