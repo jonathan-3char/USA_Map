@@ -1,248 +1,194 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import Game from "@/components/Game";
-import SearchBar from "@/components/SearchBar";
-import { graph } from "@/utils/states";
+import InputBar from "@/components/InputBar";
+import NavBar from "@/components/NavBar";
+import ResultGrid from "@/components/ResultGrid";
+import USAMap from "@/components/USAMap";
+import Popup from "@/components/Popup";
+import { usGraph, stateNames } from "@/utils/allStates";
 
-const Home = () => {
-  const [selStates, setSelStates] = useState([]);
-  const [twoRngStates, setTwoRngStates] = useState(null);
-  const [optimalStates, setOptimalStates] = useState(null);
-  const [refresh, setRefresh] = useState(false);
-  const [neighbors, setNeighbors] = useState(null);
-  const [showList, setShowList] = useState(false);
+// given two states, this function will return a set of states that
+// are included in the optimal path
+function calcOptimalPath(stateFrom, stateTo) {
+  const visitedStates = new Set([stateFrom]);
+  const bfsStack = [{ dist: 0, name: stateFrom }];
+  const backTrackDist = new Map([[stateFrom, 0]]);
+  const optimalPath = [];
 
-  useEffect(() => {
-    const twoState = [...graph].sort(() => 0.5 - Math.random()).slice(0, 2);
-    setTwoRngStates(twoState);
-    const optimal = optimalPath(twoState);
-    setOptimalStates(optimal);
-    setSelStates([]);
-
-    const neighbors = new Set();
-
-    optimal.forEach(key => {
-      const state = graph.find(state => state.name === key);
-      state.neighbors.forEach(neighborId => {
-        if (!optimal.has(graph[neighborId].name) && !twoState.includes(graph[neighborId])) {
-          neighbors.add(graph[neighborId].name);
-        }
-      });
-    });
-   setNeighbors(neighbors); 
-
-
-  }, [refresh]);
-
-  const handleSelStates = (state) => {
-    if (
-      !selStates.find(elt => elt.name === state.name) &&
-      !twoRngStates.find(elt => elt.name === state.name)
-    ) {
-      setSelStates([...selStates, state]);
-      return true;
+  while (bfsStack.length > 0) {
+    const { dist, name } = bfsStack.shift();
+    // found the other state
+    if (name === stateTo) {
+      backTrackDist.set(name, dist);
+      break;
     }
 
-    return false;
-  };
+    const neighbors = usGraph.get(name);
 
-  const statesList = () => {
-    return (
-      <div>
-      </div>
-    )
+    for (let neighbor of neighbors) {
+      if (!visitedStates.has(neighbor)) {
+        bfsStack.push({ dist: dist + 1, name: neighbor });
+        backTrackDist.set(neighbor, dist + 1);
+        visitedStates.add(neighbor);
+      }
+    }
   }
 
-  const optimalPath = ([start, end]) => {
-    const queue = [start];
-    const visited = Array(48).fill(null);
-    visited[start.id] = { parent: null, distance: 0 };
+  const backTrackStack = [stateTo];
+  const backTrackVisted = new Set(stateTo);
 
-    while (queue.length) {
-      const node = queue.shift();
+  while (backTrackStack.length > 0) {
+    const stateName = backTrackStack.shift();
 
-      if (node === end) {
-        break;
-      }
-
-      for (let neighbor of node.neighbors) {
-        if (!visited[neighbor]) {
-          visited[neighbor] = {
-            parent: node,
-            distance: visited[node.id].distance + 1,
-          };
-          queue.push(graph[neighbor]);
-        }
-      }
+    // found starting state
+    if (stateName === stateFrom) {
+      break;
     }
 
-    const optimal = new Set();
-    let path = [end];
+    const neighbors = usGraph.get(stateName);
+    const stateDist = backTrackDist.get(stateName);
 
-    while (path.length) {
-      const node = path.shift();
-
-      if (node === start) {
-        break;
-      }
-
-      for (let neighbor of node.neighbors) {
-        if (
-          visited[neighbor] &&
-          visited[neighbor].distance === visited[node.id].distance - 1
-        ) {
-          optimal.add(graph[neighbor].name);
-          path.push(graph[neighbor]);
-        }
+    for (let neighbor of neighbors) {
+      if (
+        !backTrackVisted.has(neighbor) &&
+        backTrackDist.has(neighbor) &&
+        backTrackDist.get(neighbor) === stateDist - 1
+      ) {
+        backTrackVisted.add(neighbor);
+        backTrackStack.push(neighbor);
+        optimalPath.push(neighbor);
       }
     }
+  }
 
-    optimal.delete(start.name);
-    return optimal;
-  };
-  
-  const isWinner = () => {
-    const queue = [twoRngStates[0]];
-    const visited = new Set();
+  return optimalPath.filter((state) => state !== stateFrom);
+}
 
-    while (queue.length) {
-      const node = queue.shift();
-      visited.add(node.name);
+function doStatesConnect(stateFrom, stateTo, resultList) {
+  const stack = [stateFrom];
+  const statesVisited = new Set(stateFrom);
 
-      if (node.name === twoRngStates[1].name) {
+  while (stack.length > 0) {
+    const state = stack.pop();
+    const neighbors = usGraph.get(state);
+
+    for (let neighbor of neighbors) {
+      if (neighbor === stateTo) {
         return true;
       }
 
-      for (let neighbor of node.neighbors) {
-        if (!visited.has(graph[neighbor].name) && 
-          (selStates.find(state => state.name === graph[neighbor].name) || 
-          graph[neighbor].name === twoRngStates[1].name)) {
-          queue.push(graph[neighbor]);
-        }
+      if (!statesVisited.has(neighbor) && resultList.indexOf(neighbor) !== -1) {
+        stack.push(neighbor);
+        statesVisited.add(neighbor);
       }
     }
+  }
 
-    return false
-  };
+  return false;
+}
+
+const Home = () => {
+  const [resultList, setResultList] = useState([]);
+  const [stateFrom, setStateFrom] = useState();
+  const [stateTo, setStateTo] = useState();
+  const [optimalPath, setOptimalPath] = useState();
+  const subOptimalPath = new Set();
+  const [toggleMenu, setToggleMenu] = useState(false);
+  const [theme, setTheme] = useState("light");
+
+  useEffect(() => {
+    const state1 = stateNames[Math.floor(Math.random() * stateNames.length)];
+    setStateFrom(state1);
+    const neighborStates = [...usGraph.get(state1)];
+    neighborStates.push(stateFrom);
+    const filteredStates = stateNames.filter(
+      (state) => neighborStates.indexOf(state) === -1,
+    );
+    const state2 =
+      filteredStates[Math.floor(Math.random() * filteredStates.length)];
+    setStateTo(state2);
+    setOptimalPath(calcOptimalPath(state1, state2));
+
+    const body = document.querySelector("body");
+    if (localStorage.getItem("theme")) {
+      body.setAttribute("data-theme", localStorage.getItem("theme"));
+    } else {
+      localStorage.setItem("theme", theme);
+      body.setAttribute("data-theme", theme);
+    }
+
+    console.log(localStorage.getItem("theme"));
+    console.log(theme);
+  }, [theme]);
+
+  function handleToggleTheme() {
+    if (theme === "light") {
+      setTheme("dark");
+      localStorage.setItem("theme", "dark");
+    } else {
+      setTheme("light");
+      localStorage.setItem("theme", "light");
+    }
+  }
+
+  function handleMenuVisibility(isVisible) {
+    setToggleMenu(isVisible);
+  }
+
+  if (optimalPath) {
+    optimalPath.forEach((state) =>
+      usGraph.get(state).forEach((neighbor) => {
+        if (
+          optimalPath.indexOf(neighbor) === -1 &&
+          (neighbor !== stateFrom || neighbor !== stateTo)
+        ) {
+          subOptimalPath.add(neighbor);
+        }
+      }),
+    );
+  }
+
+  function handleNewResult(result) {
+    setResultList([...resultList, result]);
+  }
+
+  let isWinner = false;
+  if (stateFrom) {
+    isWinner = doStatesConnect(stateFrom, stateTo, resultList);
+  }
 
   return (
-    <section>
-        {showList && 
-      <div className="fixed max-w-md top-19 ml-0 mr-auto h-full bg-[#9394a5] px-4 py-2 sm:flex flex-col dark:bg-zinc-700">
-        <p className="font-bold text-mg text-neutral-700 shrink-0 dark:text-stone-200">States Selected</p>
-        <ul className="overflow-y-auto h-[88%]">
-          {selStates.map((state, i) => {
-            if (optimalStates.has(state.name)) {
-              return (
-                <li className="flex pl-2 align-middle border border-stone-300 rounded-lg mb-2"
-                    key={state.name}
-                >
-                  <div className="my-2 h-7 w-7 mr-4 bg-green-300 rounded border"></div>
-                  <p className="text-[#E4E4D0] font-bold text-sm dark:text-stone-300" key={i}>
-                    {state.name}
-                  </p>
-                </li>
-              );
-            } else if (neighbors.has(state.name)) {
-              return (
-                <li className="flex pl-2 align-middle border border-stone-300 rounded-lg mb-2"
-                  key={state.name}
-                >
-                  <div className="my-2 h-7 w-7 mr-4 bg-orange-300 rounded border"></div>
-                  <p className="text-[#E4E4D0] font-bold text-sm dark:text-stone-300" key={i}>
-                    {state.name}
-                  </p>
-                </li>
-              );
-            }
-            return (
-              <li className="flex pl-2 align-middle border border-stone-300 rounded-lg mb-2"
-                  key={state.name}
-              >
-                <div className="my-2 h-7 w-7 mr-4 bg-red-400 rounded border"></div>
-                <p className="text-[#E4E4D0] font-bold text-sm dark:text-stone-300" key={i}>
-                  {state.name}
-                </p>
-              </li>
-            );
-          })}
-        </ul>
-      </div>
-        } 
-      <div className="fixed max-w-md top-19 ml-0 mr-auto h-full bg-[#9394a5] px-4 py-2 sm:flex hidden flex-col dark:bg-zinc-700">
-        <p className="font-bold text-mg text-neutral-700 shrink-0 dark:text-stone-200">States Already Selected</p>
-        <ul className="overflow-y-auto h-[88%]">
-          {selStates.map((state, i) => {
-            if (optimalStates.has(state.name)) {
-              return (
-                <li className="flex pl-2 align-middle border border-stone-300 rounded-lg mb-2"
-                    key={state.name}
-                >
-                  <div className="my-2 h-7 w-7 mr-4 bg-green-300 rounded border"></div>
-                  <p className="text-[#E4E4D0] font-bold dark:text-stone-300" key={i}>
-                    {state.name}
-                  </p>
-                </li>
-              );
-            } else if (neighbors.has(state.name)) {
-              return (
-                <li className="flex pl-2 align-middle border border-stone-300 rounded-lg mb-2"
-                  key={state.name}
-                >
-                  <div className="my-2 h-7 w-7 mr-4 bg-orange-300 rounded border"></div>
-                  <p className="text-[#E4E4D0] font-bold dark:text-stone-300" key={i}>
-                    {state.name}
-                  </p>
-                </li>
-              );
-            }
-            return (
-              <li className="flex pl-2 align-middle border border-stone-300 rounded-lg mb-2"
-                  key={state.name}
-              >
-                <div className="my-2 h-7 w-7 mr-4 bg-red-400 rounded border"></div>
-                <p className="text-[#E4E4D0] font-bold dark:text-stone-300" key={i}>
-                  {state.name}
-                </p>
-              </li>
-            );
-          })}
-        </ul>
-      </div>
-      <div className="justify-center w-10/12 mx-auto sm:w-6/12">
-        <div className="flex">
-        <div className="font-bold flex-initial text-2xl mx-auto w-120 text-neutral-700 text-center dark:text-slate-200">
-          Go from {twoRngStates && 
-            <p
-              className="dark:text-yellow-700 text-yellow-300 inline-block" 
-            >{twoRngStates[0].name}</p>} to{" "}
-            <p
-              className="dark:text-rose-800 text-rose-400 inline-block"
-            >{twoRngStates && twoRngStates[1].name}</p>
-        </div>
-        <button onClick={() => setRefresh(!refresh)}
-          className="bg-[#6c6f91] hover:bg-[#444766] text-sm sm:text-lg p-2 text-stone-200 font-bold rounded-lg flex-initial dark:bg-stone-500 dark:hover:bg-stone-600"
-        >Click to Refresh</button>
-      </div>
-        <Game
-          className="flex-1"
-          selStates={selStates}
-          twoStates={twoRngStates}
-          optimal={optimalStates}
+    <>
+      <NavBar
+        handlePopup={handleMenuVisibility}
+        handleToggleTheme={handleToggleTheme}
+      />
+      {toggleMenu && <Popup handlePopup={handleMenuVisibility} />}
+      <div className="container">
+        <h1>
+          <span className="textRed">{stateFrom}</span> {" to "}
+          <span className="textBurgendy">{stateTo}</span>
+        </h1>
+        {isWinner && (
+          <div className="winScreen">You won! Refresh to play again</div>
+        )}
+        <USAMap statesSelected={resultList} destStates={[stateTo, stateFrom]} />
+        <InputBar
+          onEnter={handleNewResult}
+          resultList={resultList}
+          stateTo={stateTo}
+          stateFrom={stateFrom}
+          isWinner={isWinner}
         />
-    <button
-      onClick={() => setShowList(!showList)}
-      className="mt-3 flex sm:hidden bg-[#6c6f91] hover:bg-[#444766] text-sm text-stone-200 bottom-10 font-bold mx-auto rounded-full p-1 dark:bg-stone-500 dark:hover:bg-stone-600"
-    >
-    {showList ? "Close List" : "Show States"}
-    </button>
-        <div className="h-10"></div>
-        <SearchBar onAddState={handleSelStates} winner={twoRngStates && isWinner()} />
+        <ResultGrid
+          resultList={resultList}
+          optimalPath={optimalPath}
+          subOptimalPath={subOptimalPath}
+        />
       </div>
-    </section>
+    </>
   );
 };
 
 export default Home;
-

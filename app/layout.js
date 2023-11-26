@@ -1,20 +1,17 @@
-import "@/styles/globals.css"
-import Navigation from "@/components/Navigation"
+import "@/styles/globals.css";
+import Home from "./page";
 
 export const metadata = {
-  title: 'Learn US States',
-  description: 'Learn the US states by the travel path to two states.',
-}
- 
-export default function RootLayout({ children }) {
- return (
+  title: "Learn US States",
+  description: "Learn the US states by the travel path to two states.",
+};
+
+export default function RootLayout() {
+  return (
     <html lang="en">
-      <body className="font-sans text-lg bg-[##fafafa] dark:bg-zinc-900">
-        <main className="justify-center items-center">
-          <Navigation />
-          {children}
-        </main>
+      <body>
+        <Home />
       </body>
     </html>
-  )
+  );
 }

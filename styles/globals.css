@@ -1,33 +1,321 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+html {
+  font-size: 16px;
+  font-family: Arial, Helvetica, sans-serif;
+  height: 100%;
+}
 
-h2 {
+body {
+  height: 100%;
+}
+
+body[data-theme="dark"] {
+  background-color: black;
+}
+
+#root {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+ul {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+}
+
+.sticky-navbar {
+  position: fixed;
+  width: 100%;
+  top: 0;
+  z-index: 10000;
+}
+
+.navbar button,
+.navbar a {
+  display: inline-block;
+  padding: 10px 10px;
+  flex: 1 30px;
+  text-align: center;
+  font-size: 18px;
+  transition: all 200ms ease-in-out;
+  border-style: none;
+  background-color: inherit;
+  font-weight: bolder;
+  color: #f8efee;
+  border-radius: 5px;
+  margin: 0 30px;
+  text-decoration: none;
+}
+
+h1 {
+  text-align: center;
+}
+
+.navbar > button:hover,
+.navbar > a:hover {
+  background-color: #b9b4c7;
+}
+
+.navbar {
+  position: relative;
+  background-color: #5c5470;
+  display: flex;
+  align-content: space-between;
+  font-size: 16px;
+  padding: 15px 20px;
+}
+
+.navbar[data-theme="light"] {
+  background-color: grey;
+}
+
+.textRed {
+  color: #f05941;
+}
+
+.textBurgendy {
+  color: #872341;
+}
+
+.map {
+  background-color: #faf0e6;
+  box-sizing: border-box;
+  width: 975px;
+  height: 610px;
+  border: solid grey 1px;
+  margin: 20px auto;
+  border-radius: 10px;
+  border-style: none;
+}
+
+svg {
+  width: 100%;
+  height: 100%;
+}
+
+.states {
+  width: 100%;
+  height: 100%;
+  fill: rgb(196, 182, 182);
+}
+
+.stateName {
+  width: 100px;
+  height: 100px;
+  background-color: beige;
+}
+
+.toState {
+  fill: #872341;
+  width: 100%;
+  height: 100%;
+}
+
+.fromState {
+  fill: #f05941;
+  width: 100%;
+  height: 100%;
+}
+
+.highlightState {
+  fill: rgb(255, 221, 147);
+  width: 100%;
+  height: 100%;
+}
+
+.popupBackground {
+  background-color: rgb(126, 117, 115, 0.6);
+  height: 100%;
+  width: 100%;
+  z-index: 2;
+  position: fixed;
+  align-items: center;
+  display: flex;
+  top: 0;
+  bottom: 0;
+}
+
+.popupContent {
+  padding: 20px;
+  width: 800px;
+  margin: auto;
+  background-color: white;
+  border-radius: 20px;
+  position: relative;
+  color: #67595e;
+  font-size: 18px;
+  min-height: 400px;
+}
+
+.popupExitButton {
+  position: absolute;
+  background-color: #d42b2c;
+  border-radius: 50%;
+  width: 25px;
+  height: 25px;
+  right: 10px;
+  top: 10px;
+  border-style: none;
+}
+
+.popupExitButton:hover {
+  background-color: #c22828;
+}
+
+.winScreen {
+  width: 200px;
+  height: 100px;
+  margin: auto;
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  background-color: rgb(171, 237, 187, 0.7);
+  color: black;
+  font-weight: bold;
+  text-align: center;
+  font-size: 24px;
+}
+
+button > a {
+  text-decoration: none;
+  color: inherit;
+}
+
+.states :hover {
+  fill: red;
+}
+
+.stateBorder {
+  fill: none;
+  stroke: #ffff;
+  stroke-width: 0.5px;
+  stroke-linecap: round;
+  pointer-events: none;
+}
+
+.container {
+  position: relative;
+  padding-top: 80px;
+  margin: auto;
+  width: 990px;
+  border-radius: 30px;
+  flex: 1;
+  color: #352f44;
+}
+
+input {
+  box-sizing: border-box;
+  width: 200px;
+  margin: auto;
+  font-family: inherit;
+  font-size: 100%;
+  display: block;
+  padding: 4px 10px;
+  border-style: solid;
+  border-color: #65697d;
+  border-radius: 10px;
+  background-color: inherit;
+}
+
+datalist {
+  position: relative;
+}
+
+.inputContainer {
+  position: relative;
+}
+
+.errorMessage {
+  background-color: #cb2723;
+  font-family: Haettenschweiler, "Arial Narrow Bold", sans-serif;
+  font-weight: bold;
+  display: none;
+  position: absolute;
+  width: 200px;
+  top: -40px;
+  padding: 10px;
+  border-radius: 10px;
+  text-align: center;
+  color: white;
+  font-weight: bold;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 24px;
+}
+
+datalist option {
+  font-size: 16px;
+  font-family: inherit;
+}
+
+.resultGrid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+  grid-auto-rows: minmax(50px, auto);
+  margin: 10px;
   font-weight: bold;
 }
 
-.path{
-  fill: #ffff;
-  fill:rgb(241, 225, 134)
+.grid {
+  text-align: left;
+  border: solid 3px #5c5470;
+  border-radius: 20px;
+  margin: auto 0;
+  padding: 10px 10px;
+  position: relative;
+  animation: fadeIn 1s;
+  box-shadow: 2px 1px 4px #a49393;
 }
 
-.gradient {
-  --dot-bg: black;
-  --dot-color: white;
-  --dot-size: 1px;
-  --dot-space: 22px;
-	background:
-		linear-gradient(90deg, var(--dot-bg) calc(var(--dot-space) - var(--dot-size)), transparent 1%) center / var(--dot-space) var(--dot-space),
-		linear-gradient(var(--dot-bg) calc(var(--dot-space) - var(--dot-size)), transparent 1%) center / var(--dot-space) var(--dot-space),
-		var(--dot-color);
+@keyframes fadeIn {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
 }
 
-.dots {
- background-image: linear-gradient(#1c7cbb 1px, transparent 1px, transparent calc(100% - 1px),
- #1c7cbb calc(100% - 1px)),
- linear-gradient(90deg, #1c7cbb 1px, transparent 1px, transparent calc(100% - 1px),
- #1c7cbb calc(100% - 1px));
-  background-size: 6.666666666666667% 6.25%;
-  border: 1px solid #1c7cbb;
-    background-position: 15px 0;
+.goodChoice {
+  background-color: #3d9439;
+}
+
+.badChoice {
+  background-color: #970d10;
+}
+
+.okChoice {
+  background-color: #ef9c38;
+}
+
+.circle {
+  width: 25px;
+  height: 25px;
+  border-radius: 50%;
+}
+
+.positionMiddleRight {
+  top: 50%;
+  right: 10px;
+  transform: translateY(-50%);
+  position: absolute;
+  display: inline-block;
+}
+
+.alignLeft {
+  left: 0;
+  display: inline-block;
+  transform: translateY(-50%);
+  top: 50%;
+  position: absolute;
+}
+
+.helpList > li {
+  position: relative;
+  padding-left: 30px;
+  margin-top: 10px;
+  margin-bottom: 10px;
 }
